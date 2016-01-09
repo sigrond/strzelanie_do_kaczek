@@ -9,6 +9,7 @@
 #include <GL/glut.h>
 #include <gl/freeglut.h>
 #include "SkyBox.hpp"
+#include <cstdlib>
 
 using namespace std;
 
@@ -17,11 +18,10 @@ void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
 void DisableOpenGL(HWND, HDC, HGLRC);
 
 
-int WINAPI WinMain(HINSTANCE hInstance,
-                   HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine,
-                   int nCmdShow)
+int main(int argc, char* argv[])
 {
+	HINSTANCE hInstance=GetModuleHandle(NULL);
+
     WNDCLASSEX wcex;
     HWND hwnd;
     HDC hDC;
@@ -55,14 +55,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
                           WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT,
                           CW_USEDEFAULT,
-                          512,
-                          512,
+                          1024,
+                          1024,
                           NULL,
                           NULL,
                           hInstance,
                           NULL);
 
-    ShowWindow(hwnd, nCmdShow);
+    ShowWindow(hwnd, SW_SHOW);
+
+    //char *argv[] = {"foo", "bar"};
+	//int argc = 2;
+    //glutInit(&__argc,__argv);
+    glutInit(&argc, argv);
+    glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
+
+
 
     /* enable OpenGL for the window */
     EnableOpenGL(hwnd, &hDC, &hRC);
@@ -76,6 +84,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				"valley_front.bmp");
 
 	skyBox.Load();
+
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float width  = 1024;
+	float height = 1024;
+	float length = 1024;
+
+	x = x - width  / 2;
+	y = y - height / 2;
+	z = z - length / 2;
+
+	glScalef(2, 2, 2);
 
     /* program main loop */
     while (!bQuit)
@@ -101,22 +122,137 @@ int WINAPI WinMain(HINSTANCE hInstance,
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+			/*gluLookAt(
+				0,0,0.5,
+				//camera->x(),camera->y(),camera->z(),
+				0,0,0.6,
+				0,0,0);*/
+            //glScalef(1, 1, 1.001);
             glPushMatrix();
-            glRotatef(theta, 0.0f, 0.0f, 1.0f);
 
-            glBegin(GL_TRIANGLES);
+            glMatrixMode(GL_PROJECTION);  // switch to projection matrix
+			glLoadIdentity();  // reset projection
+			gluPerspective(110.0,4.0/3.0,0.01,10.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
+			glMatrixMode(GL_MODELVIEW);  // back to model matrix
 
-                glColor3f(1.0f, 0.0f, 0.0f);   glVertex2f(0.0f,   1.0f);
-                glColor3f(0.0f, 1.0f, 0.0f);   glVertex2f(0.87f,  -0.5f);
-                glColor3f(0.0f, 0.0f, 1.0f);   glVertex2f(-0.87f, -0.5f);
+            glRotatef(theta, 0.0f, 1.0f, 0.0f);
+            //gluPerspective(45.0, (double)width / (double)height, 1.0, 100.0);
+            //glLoadIdentity();
 
-            glEnd();
+			//glColor4f(1,0,0,0.8);
+            //glutSolidSphere(0.1,20,20);
+
+			// Enable/Disable features
+			glPushAttrib(GL_ENABLE_BIT);
+			glEnable(GL_TEXTURE_2D);
+			//glDisable(GL_DEPTH_TEST);
+			//glDisable(GL_LIGHTING);
+			//glDisable(GL_BLEND);
+			//glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+			//glEnable(GL_TEXTURE_GEN_T);
+
+			// Just in case we set all vertices to white.
+			glColor4f(1,1,1,1);
+
+			// Render the front quad
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[5]);
+			//glColor3f(1,0,0);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 0); glVertex3f(  1.0f, -1.0f, -1.0f );
+				glTexCoord2f(1, 0); glVertex3f( -1.0f, -1.0f, -1.0f );
+				glTexCoord2f(1, 1); glVertex3f( -1.0f,  1.0f, -1.0f );
+				glTexCoord2f(0, 1); glVertex3f(  1.0f,  1.0f, -1.0f );*/
+				glTexCoord2f(0, 0); glVertex3f(  -1.0f, -1.0f, -1.0f );
+				glTexCoord2f(1, 0); glVertex3f( 1.0f, -1.0f, -1.0f );
+				glTexCoord2f(1, 1); glVertex3f( 1.0f,  1.0f, -1.0f );
+				glTexCoord2f(0, 1); glVertex3f(  -1.0f,  1.0f, -1.0f );
+
+
+			glEnd();
+
+			// Render the right quad
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[0]);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
+				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
+				glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f,  0.5f );*/
+				glTexCoord2f(0, 0); glVertex3f(  1.0f, -1.0f,  -1.0f );
+				glTexCoord2f(1, 0); glVertex3f(  1.0f, -1.0f, 1.0f );
+				glTexCoord2f(1, 1); glVertex3f(  1.0f,  1.0f, 1.0f );
+				glTexCoord2f(0, 1); glVertex3f(  1.0f,  1.0f,  -1.0f );
+			glEnd();
+
+			// Render the back quad
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[4]);
+			//glColor3f(0,0,0);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
+				glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f,  0.5f );*/
+				glTexCoord2f(0, 0); glVertex3f( 1.0f, -1.0f,  1.0f );
+				glTexCoord2f(1, 0); glVertex3f(  -1.0f, -1.0f,  1.0f );
+				glTexCoord2f(1, 1); glVertex3f(  -1.0f,  1.0f,  1.0f );
+				glTexCoord2f(0, 1); glVertex3f( 1.0f,  1.0f,  1.0f );
+
+			glEnd();
+
+			// Render the left quad
+			//glColor3f(0,1,0);
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[1]);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
+				glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
+				glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );*/
+				glTexCoord2f(0, 0); glVertex3f( -1.0f, -1.0f, 1.0f );
+				glTexCoord2f(1, 0); glVertex3f( -1.0f, -1.0f,  -1.0f );
+				glTexCoord2f(1, 1); glVertex3f( -1.0f,  1.0f,  -1.0f );
+				glTexCoord2f(0, 1); glVertex3f( -1.0f,  1.0f, 1.0f );
+			glEnd();
+
+			// Render the top quad
+			//glColor3f(0,0,1);
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[2]);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
+				glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
+				glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
+				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );*/
+				glTexCoord2f(0, 1); glVertex3f(  -1.0f,  1.0f, 1.0f );
+				glTexCoord2f(0, 0); glVertex3f(  -1.0f,  1.0f,  -1.0f );
+				glTexCoord2f(1, 0); glVertex3f( 1.0f,  1.0f,  -1.0f );
+				glTexCoord2f(1, 1); glVertex3f( 1.0f,  1.0f, 1.0f );
+			glEnd();
+
+			// Render the bottom quad
+			//glColor3f(1,0,0);
+			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[3]);
+			glBegin(GL_QUADS);
+				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
+				glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
+				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );*/
+				glTexCoord2f(0, 0); glVertex3f( -1.0f, -1.0f, 1.0f );
+				glTexCoord2f(0, 1); glVertex3f( -1.0f, -1.0f,  -1.0f );
+				glTexCoord2f(1, 1); glVertex3f(  1.0f, -1.0f,  -1.0f );
+				glTexCoord2f(1, 0); glVertex3f(  1.0f, -1.0f, 1.0f );
+
+				//glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
+				//glTexCoord2f(0, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
+				//glTexCoord2f(1, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
+				//glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
+			glEnd();
+
+			// Restore enable bits and matrix
+			glPopAttrib();
 
             glPopMatrix();
 
             SwapBuffers(hDC);
 
-            theta += 1.0f;
+            theta += 0.1f;
             Sleep (1);
         }
     }
@@ -188,6 +324,8 @@ void EnableOpenGL(HWND hwnd, HDC* hDC, HGLRC* hRC)
     *hRC = wglCreateContext(*hDC);
 
     wglMakeCurrent(*hDC, *hRC);
+
+
 }
 
 void DisableOpenGL (HWND hwnd, HDC hDC, HGLRC hRC)

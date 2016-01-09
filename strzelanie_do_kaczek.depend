@@ -1,12 +1,13 @@
 # depslib dependency file v1.0
-1452362145 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
+1452379440 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
 	<windows.h>
 	<gl/gl.h>
 	<GL/glut.h>
 	<gl/freeglut.h>
 	"SkyBox.hpp"
+	<cstdlib>
 
-1452356989 d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.hpp
+1452367783 d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.hpp
 	<string>
 	<fstream>
 	<windows.h>
@@ -14,7 +15,7 @@
 	<GL/glut.h>
 	<string>
 
-1452362107 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
+1452374088 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
 	"SkyBox.hpp"
 	<cstdio>
 	<cstring>
@@ -24,4 +25,5 @@
 	<gl/glu.h>
 	<GL/glext.h>
 	<gl/freeglut.h>
+	<iostream>
 

@@ -13,6 +13,7 @@
 #include <gl/glu.h>
 #include <GL/glext.h>
 #include <gl/freeglut.h>
+#include <iostream>
 
 using namespace std;
 
@@ -96,6 +97,8 @@ Image* loadBMP_custom(const char * imagepath)
 	image->height=height;
 	image->width=width;
 
+	cout<<"Wczytano: "<<imagepath<<endl;
+
 	return image;
 
 	// Create one OpenGL texture
@@ -124,17 +127,37 @@ int types[]={GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 bool SkyBox::Load()
 {
 	Image* image=NULL;
+
+	glGenTextures(1, &m_textureObj);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureObj);
+
 	for(int i=0;i<6;i++)
 	{
 		image=loadBMP_custom(m_fileNames[i].c_str());
 
-		glTexImage2D(types[i], 0, GL_RGB, image->width, image->height, 0, GL_BGR,
-		GL_UNSIGNED_BYTE, image->data);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		// Create one OpenGL texture
+		//GLuint textureID;
+		glGenTextures(1, &textureID[i]);
+		// "Bind" the newly created texture : all future texture functions will modify this texture
+		glBindTexture(GL_TEXTURE_2D, textureID[i]);
+		// Give the image to OpenGL
+		glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//te dwa były potrzebne, żeby tekstury się wyświetlały
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		//glTexImage2D(types[i], 0, GL_RGB, image->width, image->height, 0, GL_BGR,
+		//GL_UNSIGNED_BYTE, image->data);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 		if(image->data!=NULL)
 			delete[] image->data;
@@ -146,12 +169,13 @@ bool SkyBox::Load()
 	return true;
 }
 
-void SkyBox::Bind(GLenum TextureUnit)
+void SkyBox::Bind(int i)
 {
-
+	//glActiveTexture(TextureUnit);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID[i]);
 }
 
-void SkyBox::operator()()
+void SkyBox::Render()
 {
 
 }

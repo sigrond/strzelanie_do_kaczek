@@ -25,9 +25,10 @@ public:
 	const std::string& PosZFilename,//tył?
 	const std::string& NegZFilename);//przód?
 	~SkyBox();
-	void operator()();
+	void Render();
 	bool Load();
-	void Bind(GLenum TextureUnit);
+	void Bind(int i);
+	GLuint textureID[6];
 protected:
 private:
 	std::string m_fileNames[6];
