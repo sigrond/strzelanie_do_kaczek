@@ -17,6 +17,15 @@ LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
 void DisableOpenGL(HWND, HDC, HGLRC);
 
+float oldMouseX=0;
+float oldMouseY=0;
+float mouseX=0;
+float mouseY=0;
+float lookX=0, lookY=0, lookZ=0;
+float angle=0;
+float zoomX=2,zoomY=2,zoomZ=2;
+bool rmbd=false;
+float moveX=0,moveZ=0;
 
 int main(int argc, char* argv[])
 {
@@ -96,7 +105,15 @@ int main(int argc, char* argv[])
 	y = y - height / 2;
 	z = z - length / 2;
 
-	glScalef(2, 2, 2);
+	glTranslatef(0,-1,0);
+	glRotatef(15, 1.0f, 0.0f, 0.0f);
+	glScalef(zoomX, zoomY, zoomZ);
+
+	float cameraX = lookX + mouseX / 2.0f;
+	float cameraY = lookY + mouseY / 2.0f;
+	float cameraZ = lookZ;
+
+	//gluLookAt(cameraX, cameraY, cameraZ, lookX, lookY, lookZ, 0.0, 1.0, 0.0);
 
     /* program main loop */
     while (!bQuit)
@@ -123,20 +140,35 @@ int main(int argc, char* argv[])
             glClear(GL_COLOR_BUFFER_BIT);
 
 			/*gluLookAt(
-				0,0,0.5,
+				0,0.1,0.5,
 				//camera->x(),camera->y(),camera->z(),
 				0,0,0.6,
-				0,0,0);*/
+				0.1,0,0);*/
             //glScalef(1, 1, 1.001);
             glPushMatrix();
 
             glMatrixMode(GL_PROJECTION);  // switch to projection matrix
 			glLoadIdentity();  // reset projection
-			gluPerspective(110.0,4.0/3.0,0.01,10.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
+			gluPerspective(90.0,4.0/3.0,0.01,10.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
 			glMatrixMode(GL_MODELVIEW);  // back to model matrix
 
-            glRotatef(theta, 0.0f, 1.0f, 0.0f);
-            //gluPerspective(45.0, (double)width / (double)height, 1.0, 100.0);
+
+			float cameraY = lookY + mouseY / 2.0f;
+
+			glTranslatef(moveX,0,moveZ);
+
+            glRotatef(mouseY/8-30, 1.0f, 0.0f, 0.0f);
+            glRotatef(angle, 0.0f, 1.0f, 0.0f);
+
+            if(rmbd)
+			{
+				glScalef(zoomX/2, zoomY/2, zoomZ/2);
+			}
+			else
+			{
+				glScalef(zoomX, zoomY, zoomZ);
+			}
+
             //glLoadIdentity();
 
 			//glColor4f(1,0,0,0.8);
@@ -158,10 +190,6 @@ int main(int argc, char* argv[])
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[5]);
 			//glColor3f(1,0,0);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 0); glVertex3f(  1.0f, -1.0f, -1.0f );
-				glTexCoord2f(1, 0); glVertex3f( -1.0f, -1.0f, -1.0f );
-				glTexCoord2f(1, 1); glVertex3f( -1.0f,  1.0f, -1.0f );
-				glTexCoord2f(0, 1); glVertex3f(  1.0f,  1.0f, -1.0f );*/
 				glTexCoord2f(0, 0); glVertex3f(  -1.0f, -1.0f, -1.0f );
 				glTexCoord2f(1, 0); glVertex3f( 1.0f, -1.0f, -1.0f );
 				glTexCoord2f(1, 1); glVertex3f( 1.0f,  1.0f, -1.0f );
@@ -173,10 +201,6 @@ int main(int argc, char* argv[])
 			// Render the right quad
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[0]);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-				glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f,  0.5f );*/
 				glTexCoord2f(0, 0); glVertex3f(  1.0f, -1.0f,  -1.0f );
 				glTexCoord2f(1, 0); glVertex3f(  1.0f, -1.0f, 1.0f );
 				glTexCoord2f(1, 1); glVertex3f(  1.0f,  1.0f, 1.0f );
@@ -187,10 +211,6 @@ int main(int argc, char* argv[])
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[4]);
 			//glColor3f(0,0,0);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-				glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f,  0.5f );*/
 				glTexCoord2f(0, 0); glVertex3f( 1.0f, -1.0f,  1.0f );
 				glTexCoord2f(1, 0); glVertex3f(  -1.0f, -1.0f,  1.0f );
 				glTexCoord2f(1, 1); glVertex3f(  -1.0f,  1.0f,  1.0f );
@@ -202,10 +222,6 @@ int main(int argc, char* argv[])
 			//glColor3f(0,1,0);
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[1]);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-				glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-				glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );*/
 				glTexCoord2f(0, 0); glVertex3f( -1.0f, -1.0f, 1.0f );
 				glTexCoord2f(1, 0); glVertex3f( -1.0f, -1.0f,  -1.0f );
 				glTexCoord2f(1, 1); glVertex3f( -1.0f,  1.0f,  -1.0f );
@@ -216,10 +232,6 @@ int main(int argc, char* argv[])
 			//glColor3f(0,0,1);
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[2]);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-				glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-				glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-				glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );*/
 				glTexCoord2f(0, 1); glVertex3f(  -1.0f,  1.0f, 1.0f );
 				glTexCoord2f(0, 0); glVertex3f(  -1.0f,  1.0f,  -1.0f );
 				glTexCoord2f(1, 0); glVertex3f( 1.0f,  1.0f,  -1.0f );
@@ -230,25 +242,18 @@ int main(int argc, char* argv[])
 			//glColor3f(1,0,0);
 			glBindTexture(GL_TEXTURE_2D, skyBox.textureID[3]);
 			glBegin(GL_QUADS);
-				/*glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-				glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-				glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );*/
 				glTexCoord2f(0, 0); glVertex3f( -1.0f, -1.0f, 1.0f );
 				glTexCoord2f(0, 1); glVertex3f( -1.0f, -1.0f,  -1.0f );
 				glTexCoord2f(1, 1); glVertex3f(  1.0f, -1.0f,  -1.0f );
 				glTexCoord2f(1, 0); glVertex3f(  1.0f, -1.0f, 1.0f );
-
-				//glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-				//glTexCoord2f(0, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-				//glTexCoord2f(1, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-				//glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
 			glEnd();
 
 			// Restore enable bits and matrix
 			glPopAttrib();
 
             glPopMatrix();
+
+
 
             SwapBuffers(hDC);
 
@@ -268,6 +273,7 @@ int main(int argc, char* argv[])
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	rmbd=false;
     switch (uMsg)
     {
         case WM_CLOSE:
@@ -284,9 +290,58 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 case VK_ESCAPE:
                     PostQuitMessage(0);
                 break;
+                case 'Q':
+                	angle-=3;
+                	break;
+				case 'E':
+					angle+=3;
+					break;
+				case 'A':
+					if(moveX<1)
+					moveX+=0.01;
+					break;
+				case 'D':
+					if(moveX>-1)
+					moveX-=0.01;
+					break;
+				case 'W':
+					if(moveZ<1)
+					moveZ+=0.01;
+					break;
+				case 'S':
+					if(moveZ>-1)
+					moveZ-=0.01;
+					break;
             }
         }
         break;
+
+		case WM_MOUSEMOVE:
+			// save old mouse coordinates
+			oldMouseX = mouseX;
+			oldMouseY = mouseY;
+
+			// get mouse coordinates from Windows
+			mouseX = LOWORD(lParam);
+			mouseY = HIWORD(lParam);
+
+			// these lines limit the camera's range
+			if (mouseY < 60)
+				mouseY = 60;
+			if (mouseY > 450)
+				mouseY = 450;
+
+			if ((mouseX - oldMouseX) > 0)		// mouse moved to the right
+				angle += 3.0f;
+			else if ((mouseX - oldMouseX) < 0)	// mouse moved to the left
+				angle -= 3.0f;
+
+			return 0;
+			break;
+
+		case WM_RBUTTONDOWN:
+			rmbd=true;
+			break;
 
         default:
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
