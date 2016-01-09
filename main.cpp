@@ -7,6 +7,10 @@
 #include <windows.h>
 #include <gl/gl.h>
 #include <GL/glut.h>
+#include <gl/freeglut.h>
+#include "SkyBox.hpp"
+
+using namespace std;
 
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
@@ -51,8 +55,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
                           WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT,
                           CW_USEDEFAULT,
-                          256,
-                          256,
+                          512,
+                          512,
                           NULL,
                           NULL,
                           hInstance,
@@ -63,7 +67,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
     /* enable OpenGL for the window */
     EnableOpenGL(hwnd, &hDC, &hRC);
 
-	SkyBox skyBox();
+	SkyBox skyBox("mudriver\\",
+				"valley_right.bmp",
+				"valley_left.bmp",
+				"valley_top.bmp",
+				"valley_bottom.bmp",
+				"valley_back.bmp",
+				"valley_front.bmp");
+
+	skyBox.Load();
 
     /* program main loop */
     while (!bQuit)
