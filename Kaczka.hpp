@@ -34,6 +34,7 @@ public:
 	void renderKaczka(float size=0.1f);
 	void load();
 	bool trafiona();
+	float* getCartPos();
 protected:
 private:
 	float x,y,z;/**< wsp kartezjańskie */

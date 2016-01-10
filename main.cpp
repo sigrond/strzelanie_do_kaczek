@@ -10,6 +10,7 @@
 #include <gl/freeglut.h>
 #include "SkyBox.hpp"
 #include "Kaczka.hpp"
+#include "Strzal.hpp"
 #include <cstdlib>
 #include <iostream>
 
@@ -83,7 +84,7 @@ void display()
 	glPushMatrix();
 	glMatrixMode(GL_PROJECTION);  // switch to projection matrix
 	glLoadIdentity();  // reset projection
-	gluPerspective(90.0,4.0/3.0,0.01,10000.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
+	gluPerspective(45.0,4.0/3.0,0.01,10000.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
 	glMatrixMode(GL_MODELVIEW);  // back to model matrix
 	float cameraY = lookY + mouseY / 2.0f;
 	glTranslatef(moveX,0,moveZ);
@@ -182,6 +183,7 @@ void mButtonPressed(int button, int state, int x, int y)
 	}
 	if(button=2 && state==0)
 	{
+		if(Strzal(moveX,-1,moveZ,mouseY/8-30,angle,kaczka->getCartPos()))
 		kaczka->trafiona();
 	}
 }

@@ -18,7 +18,7 @@ Kaczka::Kaczka(const std::string& Directory,
 	const std::string& DuckDownFilename) :
 		x(0), y(0), z(-1.0f), phi(0), theta(0), rho(2.5f),
 		speed(0.1f), state(StanKaczki::UP), licznik(0),
-		skrzydla(0), obrotZ(0)
+		skrzydla(0), obrotZ(10)
 {
 	fileNames[0]=Directory+DuckUpFilename;
 	fileNames[1]=Directory+DuckMidFilename;
@@ -46,6 +46,7 @@ void Kaczka::renderKaczka(float size)
 	{
 		//theta+=0.0001f;
 		y+=0.001f;
+		obrotZ=-10;
 		if(y>=1.0f)
 		{
 			state=StanKaczki::DOWN;
@@ -55,6 +56,7 @@ void Kaczka::renderKaczka(float size)
 	{
 		//theta-=0.0001f;
 		y-=0.001f;
+		obrotZ=10;
 		if(y<=-1.0f)
 		{
 			state=StanKaczki::UP;
@@ -64,11 +66,15 @@ void Kaczka::renderKaczka(float size)
 	{
 		y-=0.002f;
 		skrzydla=1;
-		obrotZ+=0.01f;
-		if(obrotZ<60)
-			obrotZ=60;
+		obrotZ+=0.1f;
+		if(obrotZ>90)
+			obrotZ=90;
 		if(y<=-2.0f)
-			return;
+		{
+			state=StanKaczki::UP;
+			phi-=3.1415f;
+		}
+			//return;
 	}
 	//x=rho*cos(phi)*cos(theta);
 	//y=rho*cos(phi)*sin(theta);
@@ -90,10 +96,10 @@ void Kaczka::renderKaczka(float size)
 	glBindTexture(GL_TEXTURE_2D, textureID[skrzydla]);
 	//glutSolidSphere(0.1f,20,20);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0, 0); glVertex3f( -size, -size, -size );
-		glTexCoord2f(1, 0); glVertex3f(  size, -size, -size );
-		glTexCoord2f(1, 1); glVertex3f(  size,  size, -size );
-		glTexCoord2f(0, 1); glVertex3f( -size,  size, -size );
+		glTexCoord2f(0, 0); glVertex3f( -size, -size/2, -size );
+		glTexCoord2f(1, 0); glVertex3f(  size, -size/2, -size );
+		glTexCoord2f(1, 1); glVertex3f(  size,  size/2, -size );
+		glTexCoord2f(0, 1); glVertex3f( -size,  size/2, -size );
 	glEnd();
 }
 
@@ -162,6 +168,14 @@ bool Kaczka::trafiona()
 	state=StanKaczki::DEAD;
 }
 
+float* Kaczka::getCartPos()
+{
+	float* r=new float[3];
+	r[0]=x;
+	r[1]=y;
+	r[2]=z;
+	return r;
+}
 
 
 
