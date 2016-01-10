@@ -180,6 +180,10 @@ void mButtonPressed(int button, int state, int x, int y)
 	{
 		rmbd=false;
 	}
+	if(button=2 && state==0)
+	{
+		kaczka->trafiona();
+	}
 }
 
 void mouseMove(int x, int y)

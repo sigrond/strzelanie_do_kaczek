@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1452435735 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
+1452442302 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
 	<windows.h>
 	<gl/gl.h>
 	<GL/glut.h>
@@ -30,13 +30,14 @@
 	<iostream>
 	"openBMP.hpp"
 
-1452436932 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.cpp
+1452442215 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.cpp
 	"Kaczka.hpp"
 	<gl/freeglut.h>
 	<cmath>
 	"openBMP.hpp"
+	<iostream>
 
-1452436945 d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.hpp
+1452442073 d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.hpp
 	<string>
 	<gl/gl.h>
 	<GL/glext.h>

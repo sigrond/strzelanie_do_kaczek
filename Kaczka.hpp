@@ -33,6 +33,7 @@ public:
 	~Kaczka();
 	void renderKaczka(float size=0.1f);
 	void load();
+	bool trafiona();
 protected:
 private:
 	float x,y,z;/**< wsp kartezjańskie */
@@ -46,4 +47,5 @@ private:
 	GLuint textureID[3];
 	unsigned long licznik;
 	int skrzydla;
+	float obrotZ;
 };

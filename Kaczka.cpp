@@ -17,7 +17,8 @@ Kaczka::Kaczka(const std::string& Directory,
 	const std::string& DuckMidFilename,
 	const std::string& DuckDownFilename) :
 		x(0), y(0), z(-1.0f), phi(0), theta(0), rho(2.5f),
-		speed(0.1f), state(StanKaczki::UP), licznik(0), skrzydla(0)
+		speed(0.1f), state(StanKaczki::UP), licznik(0),
+		skrzydla(0), obrotZ(0)
 {
 	fileNames[0]=Directory+DuckUpFilename;
 	fileNames[1]=Directory+DuckMidFilename;
@@ -59,6 +60,16 @@ void Kaczka::renderKaczka(float size)
 			state=StanKaczki::UP;
 		}
 	}
+	else if(state==StanKaczki::DEAD)
+	{
+		y-=0.002f;
+		skrzydla=1;
+		obrotZ+=0.01f;
+		if(obrotZ<60)
+			obrotZ=60;
+		if(y<=-2.0f)
+			return;
+	}
 	//x=rho*cos(phi)*cos(theta);
 	//y=rho*cos(phi)*sin(theta);
 	//z=rho*sin(phi);
@@ -66,10 +77,14 @@ void Kaczka::renderKaczka(float size)
 	z=rho*cos(phi);
 	glTranslatef(x,y,z);
 	glRotatef(phi*180/3.1415f,0,1,0);
+	glRotatef(-obrotZ,0,0,1);
 
 	glPushAttrib(GL_ENABLE_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glColor4f(1,1,1,1);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//glColor4f(1,0,0,0.8);
 	glBindTexture(GL_TEXTURE_2D, textureID[skrzydla]);
@@ -85,14 +100,42 @@ void Kaczka::renderKaczka(float size)
 void Kaczka::load()
 {
 	Image* image=NULL;
+	char* data=NULL;
 	for(int i=0;i<3;i++)
 	{
 		image=loadBMP_custom(fileNames[i].c_str());
+		//własna alpha
+		data=new char[image->width*image->height*4];
+		for(int j=0;j<image->width*image->height;j++)
+		{
+			//cout<<image->data[3*j]<<" "<<image->data[3*j+1]<<" "<<image->data[3*j+2]<<endl;
+			if(image->data[3*j]==0xFF && image->data[3*j+1]==0xFF && image->data[3*j+2]==0xFF)
+			{
+				data[4*j]=0xFF;
+				data[4*j+1]=0xFF;
+				data[4*j+2]=0xFF;
+				data[4*j+3]=0x00;
+			}
+			else if(image->data[3*j]>0xEE && image->data[3*j+1]>0xEE && image->data[3*j+2]>0xEE)
+			{
+				data[4*j]=image->data[3*j];
+				data[4*j+1]=image->data[3*j+1];
+				data[4*j+2]=image->data[3*j+2];
+				data[4*j+3]=0x88;
+			}
+			else
+			{
+				data[4*j]=image->data[3*j];
+				data[4*j+1]=image->data[3*j+1];
+				data[4*j+2]=image->data[3*j+2];
+				data[4*j+3]=0xFF;
+			}
+		}
 		glGenTextures(1, &textureID[i]);
 		// "Bind" the newly created texture : all future texture functions will modify this texture
 		glBindTexture(GL_TEXTURE_2D, textureID[i]);
 		// Give the image to OpenGL
-		glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, image->width, image->height, 0, GL_BGR, GL_UNSIGNED_BYTE, image->data);
+		glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, image->width, image->height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -108,10 +151,16 @@ void Kaczka::load()
 		if(image!=NULL)
 			delete image;
 		image=NULL;
+		if(data!=NULL)
+			delete[] data;
+		data=NULL;
 	}
 }
 
-
+bool Kaczka::trafiona()
+{
+	state=StanKaczki::DEAD;
+}
 
 
 
