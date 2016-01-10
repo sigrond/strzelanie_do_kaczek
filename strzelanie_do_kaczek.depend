@@ -1,13 +1,15 @@
 # depslib dependency file v1.0
-1452381073 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
+1452435735 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
 	<windows.h>
 	<gl/gl.h>
 	<GL/glut.h>
 	<gl/freeglut.h>
 	"SkyBox.hpp"
+	"Kaczka.hpp"
 	<cstdlib>
+	<iostream>
 
-1452367783 d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.hpp
+1452435630 d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.hpp
 	<string>
 	<fstream>
 	<windows.h>
@@ -15,7 +17,7 @@
 	<GL/glut.h>
 	<string>
 
-1452379590 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
+1452434385 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
 	"SkyBox.hpp"
 	<cstdio>
 	<cstring>
@@ -26,4 +28,24 @@
 	<GL/glext.h>
 	<gl/freeglut.h>
 	<iostream>
+	"openBMP.hpp"
+
+1452436932 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.cpp
+	"Kaczka.hpp"
+	<gl/freeglut.h>
+	<cmath>
+	"openBMP.hpp"
+
+1452436945 d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.hpp
+	<string>
+	<gl/gl.h>
+	<GL/glext.h>
+	<gl/freeglut.h>
+
+1452434683 d:\moje dokumenty\gkom\strzelanie_do_kaczek\openbmp.hpp
+	<iostream>
+	<cstdio>
+
+1452434660 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\openbmp.cpp
+	"openBMP.hpp"
 

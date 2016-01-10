@@ -25,12 +25,12 @@ public:
 	const std::string& PosZFilename,//tył?
 	const std::string& NegZFilename);//przód?
 	~SkyBox();
-	void Render();
+	void Render(float size=1.0f);
 	bool Load();
 	void Bind(int i);
-	GLuint textureID[6];
 protected:
 private:
+	GLuint textureID[6];
 	std::string m_fileNames[6];
 	GLuint m_textureObj;
 };

@@ -14,6 +14,7 @@
 #include <GL/glext.h>
 #include <gl/freeglut.h>
 #include <iostream>
+#include "openBMP.hpp"
 
 using namespace std;
 
@@ -38,84 +39,7 @@ SkyBox::~SkyBox()
 
 }
 
-struct Image
-{
-	unsigned int width, height;
-	unsigned char * data;
-};
 
-Image* loadBMP_custom(const char * imagepath)
-{
-	Image* image=new Image();
-	// Data read from the header of the BMP file
-	unsigned char header[54]; // Each BMP file begins by a 54-bytes header
-	unsigned int dataPos;     // Position in the file where the actual data begins
-	unsigned int width, height;
-	unsigned int imageSize;   // = width*height*3
-	// Actual RGB data
-	unsigned char * data;
-
-	FILE * file = fopen(imagepath,"rb");
-	if (!file)
-	{
-		printf("Image could not be opened\n");
-		return 0;
-	}
-
-	if ( fread(header, 1, 54, file)!=54 )
-	{ // If not 54 bytes read : problem
-		printf("Not a correct BMP file\n");
-		return 0;
-	}
-
-	if ( header[0]!='B' || header[1]!='M' )
-	{
-		printf("Not a correct BMP file\n");
-		return 0;
-	}
-
-	// Read ints from the byte array
-	dataPos    = *(int*)&(header[0x0A]);
-	imageSize  = *(int*)&(header[0x22]);
-	width      = *(int*)&(header[0x12]);
-	height     = *(int*)&(header[0x16]);
-
-	// Some BMP files are misformatted, guess missing information
-	if (imageSize==0)
-		imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
-	if (dataPos==0)
-		dataPos=54; // The BMP header is done that way
-
-	// Create a buffer
-	data = new unsigned char [imageSize];
-	// Read the actual data from the file into the buffer
-	fread(data,1,imageSize,file);
-	//Everything is in memory now, the file can be closed
-	fclose(file);
-
-	image->data=data;
-	image->height=height;
-	image->width=width;
-
-	cout<<"Wczytano: "<<imagepath<<endl;
-
-	return image;
-
-	// Create one OpenGL texture
-	//GLuint textureID;
-	//glGenTextures(1, &textureID);
-
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	//glBindTexture(GL_TEXTURE_2D, textureID);
-	// Give the image to OpenGL
-	/*glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-*/
-    //delete data;
-}
 
 int types[]={GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -128,8 +52,8 @@ bool SkyBox::Load()
 {
 	Image* image=NULL;
 
-	glGenTextures(1, &m_textureObj);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureObj);
+	//glGenTextures(1, &m_textureObj);
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureObj);
 
 	for(int i=0;i<6;i++)
 	{
@@ -175,7 +99,81 @@ void SkyBox::Bind(int i)
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID[i]);
 }
 
-void SkyBox::Render()
+void SkyBox::Render(float size)
 {
+	glPushAttrib(GL_ENABLE_BIT);
+	glEnable(GL_TEXTURE_2D);
+	//glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_LIGHTING);
+	//glDisable(GL_BLEND);
+	//glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+	//glEnable(GL_TEXTURE_GEN_T);
 
+	// Just in case we set all vertices to white.
+	glColor4f(1,1,1,1);
+
+	// Render the front quad
+	glBindTexture(GL_TEXTURE_2D, textureID[5]);
+	//glColor3f(1,0,0);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex3f( -size, -size, -size );
+		glTexCoord2f(1, 0); glVertex3f(  size, -size, -size );
+		glTexCoord2f(1, 1); glVertex3f(  size,  size, -size );
+		glTexCoord2f(0, 1); glVertex3f( -size,  size, -size );
+
+
+	glEnd();
+
+	// Render the right quad
+	glBindTexture(GL_TEXTURE_2D, textureID[0]);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex3f(  size, -size, -size );
+		glTexCoord2f(1, 0); glVertex3f(  size, -size,  size );
+		glTexCoord2f(1, 1); glVertex3f(  size,  size,  size );
+		glTexCoord2f(0, 1); glVertex3f(  size,  size, -size );
+	glEnd();
+
+	// Render the back quad
+	glBindTexture(GL_TEXTURE_2D, textureID[4]);
+	//glColor3f(0,0,0);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex3f(  size, -size,  size );
+		glTexCoord2f(1, 0); glVertex3f( -size, -size,  size );
+		glTexCoord2f(1, 1); glVertex3f( -size,  size,  size );
+		glTexCoord2f(0, 1); glVertex3f(  size,  size,  size );
+
+	glEnd();
+
+	// Render the left quad
+	//glColor3f(0,1,0);
+	glBindTexture(GL_TEXTURE_2D, textureID[1]);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex3f( -size, -size,  size );
+		glTexCoord2f(1, 0); glVertex3f( -size, -size, -size );
+		glTexCoord2f(1, 1); glVertex3f( -size,  size, -size );
+		glTexCoord2f(0, 1); glVertex3f( -size,  size,  size );
+	glEnd();
+
+	// Render the top quad
+	//glColor3f(0,0,1);
+	glBindTexture(GL_TEXTURE_2D, textureID[2]);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 1); glVertex3f( -size,  size,  size );
+		glTexCoord2f(0, 0); glVertex3f( -size,  size, -size );
+		glTexCoord2f(1, 0); glVertex3f(  size,  size, -size );
+		glTexCoord2f(1, 1); glVertex3f(  size,  size,  size );
+	glEnd();
+
+	// Render the bottom quad
+	//glColor3f(1,0,0);
+	glBindTexture(GL_TEXTURE_2D, textureID[3]);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex3f( -size, -size,  size );
+		glTexCoord2f(0, 1); glVertex3f( -size, -size, -size );
+		glTexCoord2f(1, 1); glVertex3f(  size, -size, -size );
+		glTexCoord2f(1, 0); glVertex3f(  size, -size,  size );
+	glEnd();
+
+	// Restore enable bits and matrix
+	glPopAttrib();
 }
