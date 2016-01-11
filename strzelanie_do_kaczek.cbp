@@ -39,9 +39,14 @@
 			<Add library="glu32" />
 			<Add library="gdi32" />
 		</Linker>
+		<Unit filename="Kaczka.cpp" />
+		<Unit filename="Kaczka.hpp" />
 		<Unit filename="SkyBox.cpp" />
 		<Unit filename="SkyBox.hpp" />
+		<Unit filename="Strzal.hpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="openBMP.cpp" />
+		<Unit filename="openBMP.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

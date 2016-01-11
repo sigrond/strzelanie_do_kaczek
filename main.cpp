@@ -11,6 +11,7 @@
 #include "SkyBox.hpp"
 #include "Kaczka.hpp"
 #include "Strzal.hpp"
+#include "Shotgun.hpp"
 #include <cstdlib>
 #include <iostream>
 
@@ -39,6 +40,7 @@ SkyBox skyBox("mudriver\\",
 				"valley_front.bmp");
 
 Kaczka* kaczka;
+Shotgun* shotgun;
 
 float x = 0;
 float y = 0;
@@ -86,6 +88,9 @@ void display()
 	glLoadIdentity();  // reset projection
 	gluPerspective(45.0,4.0/3.0,0.01,10000.0);   // 90deg FOV, 4:3 aspect ratio, 0.01 near clip plane, 10.0 far clip plane
 	glMatrixMode(GL_MODELVIEW);  // back to model matrix
+
+
+
 	float cameraY = lookY + mouseY / 2.0f;
 	glTranslatef(moveX,0,moveZ);
 	glRotatef(mouseY/8-30, 1.0f, 0.0f, 0.0f);
@@ -102,6 +107,7 @@ void display()
 	// Enable/Disable features
 	skyBox.Render(1.0f);
 	kaczka->renderKaczka(0.1f);
+	shotgun->renderShotgun(angle,mouseY/8-30,4.0f);
 	//glTranslatef(0,0,-1.0f);
 	//glColor4f(1,0,0,0.8);
 	//glutSolidSphere(0.1f,20,20);
@@ -238,12 +244,17 @@ int main(int argc, char* argv[])
 	glLoadIdentity();
 	gluPerspective(45.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
 	glMatrixMode(GL_MODELVIEW);
+
 	skyBox.Load();
 	kaczka=new Kaczka("duck\\",
 					"duck_up.bmp",
 					"duck_mid.bmp",
 					"duck_down.bmp");
 	kaczka->load();
+	shotgun=new Shotgun("shotgun\\",
+						"Dead_rising_Shotgun.bmp");
+	shotgun->load();
+
 	x = x - width  / 2;
 	y = y - height / 2;
 	z = z - length / 2;

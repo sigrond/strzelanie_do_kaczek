@@ -101,6 +101,7 @@ void SkyBox::Bind(int i)
 
 void SkyBox::Render(float size)
 {
+	glPushMatrix();
 	glPushAttrib(GL_ENABLE_BIT);
 	glEnable(GL_TEXTURE_2D);
 	//glDisable(GL_DEPTH_TEST);
@@ -176,4 +177,5 @@ void SkyBox::Render(float size)
 
 	// Restore enable bits and matrix
 	glPopAttrib();
+	glPopMatrix();
 }

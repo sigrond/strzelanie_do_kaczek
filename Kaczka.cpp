@@ -81,6 +81,7 @@ void Kaczka::renderKaczka(float size)
 	//z=rho*sin(phi);
 	x=rho*sin(phi);
 	z=rho*cos(phi);
+	glPushMatrix();
 	glTranslatef(x,y,z);
 	glRotatef(phi*180/3.1415f,0,1,0);
 	glRotatef(-obrotZ,0,0,1);
@@ -101,6 +102,7 @@ void Kaczka::renderKaczka(float size)
 		glTexCoord2f(1, 1); glVertex3f(  size,  size/2, -size );
 		glTexCoord2f(0, 1); glVertex3f( -size,  size/2, -size );
 	glEnd();
+	glPopMatrix();
 }
 
 void Kaczka::load()

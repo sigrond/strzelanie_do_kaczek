@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1452464349 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
+1452522448 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\main.cpp
 	<windows.h>
 	<gl/gl.h>
 	<GL/glut.h>
@@ -7,6 +7,7 @@
 	"SkyBox.hpp"
 	"Kaczka.hpp"
 	"Strzal.hpp"
+	"Shotgun.hpp"
 	<cstdlib>
 	<iostream>
 
@@ -18,7 +19,7 @@
 	<GL/glut.h>
 	<string>
 
-1452434385 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
+1452518896 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\skybox.cpp
 	"SkyBox.hpp"
 	<cstdio>
 	<cstring>
@@ -31,7 +32,7 @@
 	<iostream>
 	"openBMP.hpp"
 
-1452460897 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.cpp
+1452518294 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\kaczka.cpp
 	"Kaczka.hpp"
 	<gl/freeglut.h>
 	<cmath>
@@ -54,4 +55,14 @@
 1452465678 d:\moje dokumenty\gkom\strzelanie_do_kaczek\strzal.hpp
 	<cmath>
 	<iostream>
+
+1452518093 d:\moje dokumenty\gkom\strzelanie_do_kaczek\shotgun.hpp
+	<string>
+	<gl/gl.h>
+	<GL/glext.h>
+	<gl/freeglut.h>
+
+1452522416 source:d:\moje dokumenty\gkom\strzelanie_do_kaczek\shotgun.cpp
+	"Shotgun.hpp"
+	"openBMP.hpp"
 
